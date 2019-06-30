@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <title>Ubicacion de Dispositivos</title> 
+  <script src="http://maps.google.com/maps/api/js?sensor=false" 
+          type="text/javascript"></script>
+  <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+</head> 
+<body>
+  <div id="map"></div>
+
+  <script type="text/javascript">
+
+    var locations = [];
+    var contar = 1;
+
+    {% for ch in posts %}
+      
+    locations.push(['{{ch.title}}' , {{ch.latitud}} , {{ch.longitud}} , contar])
+    contar++;
+
+    {% endfor %}
+
+    /*
+    var locations = [
+      ['hipodromo peralvillo', 19.457789, -99.139425, 5],
+      ['Banjidal', 19.366557, -99.137531, 4],
+      ['Cronulla Beach', -34.028249, 151.157507, 3],
+      ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+      ['Maroubra Beach', -33.950198, 151.259302, 1]
+    ];
+    */
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 12,
+      center: new google.maps.LatLng(19.41, -99.13),
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+
+    var infowindow = new google.maps.InfoWindow();
+
+    var marker, i;
+
+    for (i = 0; i < locations.length; i++) {  
+      marker = new google.maps.Marker({
+        position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+        map: map
+      });
+
+      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+          infowindow.setContent(locations[i][0]);
+          infowindow.open(map, marker);
+        }
+      })(marker, i));
+    }
+  </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsi71qO1c2ji66IwaahSpVeDVOGmyahRw&callback=initMap">
+    </script>
+  </body>
+</html>
+
